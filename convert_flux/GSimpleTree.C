@@ -79,7 +79,7 @@ void GSimpleTree::Loop()
    if (fChain == 0) return;
 
 
-   TFile *outfile = new TFile("uboone_flux_nuwro.root", "RECREATE", "MicroBooNE Flux");
+   TFile *outfile = new TFile("uboone_flux.root", "RECREATE", "MicroBooNE Flux");
    TTree *outtree = new TTree("h3002", "MicroBooNE Flux");
    Float_t Enu, nnu[3], xnu, ynu, znu, norm;
    Int_t mode;
@@ -130,7 +130,9 @@ void GSimpleTree::Loop()
       norm = 1;
 
       outtree->Fill();
+
    }
+
    outfile->Write();
 }
 

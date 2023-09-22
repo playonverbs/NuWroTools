@@ -16,17 +16,19 @@
 ############################################################################
 
 # Unique name for the sample
-sample_name=uboone_bnb_test
+sample_name=uboone_BNB_test_run4a_2023
 
 # Which beam are you using?
-beam=bnb
+#beam=bnb
+beam=bnb_run4a
 #beam=numi_fhc
 #beam=numi_rhc
 #beam=numi_fhc_intrinsic_nue
 #beam=numi_rhc_intrinsic_nue
+#beam=numi_fhc_dirt
 
 # Path to nuwro params file you want to use
-nuwro_params=/uboone/app/users/cthorpe/NuWro/NuWroTools/scripts/params.txt
+nuwro_params=/uboone/app/users/cthorpe/NuWro/NuWroTools/scripts/NuMI_Official_params.txt
 
 # Path to putput directory (should be on pnfs)
 out_dir=/pnfs/uboone/scratch/users/cthorpe/samples/
@@ -58,7 +60,6 @@ if [ ! -v NUWRO_FLUX_DIR ]; then
 echo -e "${RED}NUWRO_FLUX_DIR has not been set! Exiting${NC}"
 return
 fi
-
 
 # Check users output dir is empty
 
@@ -120,13 +121,29 @@ echo -e "${BLUE}Generating NuWro Events${NC}"
 if [ "$beam" == "bnb" ]; then
 nuwro -i ${nuwro_params} -p "@target/MicroBooNE.txt" -p "@${NUWRO_FLUX_DIR}/uBooNE_Booster_fhc.txt" -o ${nuwrofilename} > NuWro_Out.log
 
-#NuMI FHC
+# BNB run 4a
+elif [ "$beam" == "bnb_run4a" ]; then
+nuwro -i ${nuwro_params} -p "@target/MicroBooNE.txt" -p "@${NUWRO_FLUX_DIR}/uBooNE_Booster_fhc_run4a.txt" -o ${nuwrofilename} > NuWro_Out.log
+
+# BNB Dirt
+elif [ "$beam" == "bnb_dirt" ]; then
+nuwro -i ${nuwro_params} -p "@target/MicroBooNEFull.txt" -p "@${NUWRO_FLUX_DIR}/uBooNE_Booster_fhc_dirt.txt" -o ${nuwrofilename} > NuWro_Out.log
+
+# NuMI FHC
 elif [ "$beam" == "numi_fhc" ] || [ "$beam" == "numi_fhc_intrinsic_nue" ]; then
 nuwro -i ${nuwro_params} -p "@target/MicroBooNE.txt" -p "@${NUWRO_FLUX_DIR}/uBooNE_Numi_fhc.txt" -o ${nuwrofilename} > NuWro_Out.log
 
-#NuMI RHC
+# NuMI RHC
 elif [ "$beam" == "numi_rhc" ] || [ "$beam" == "numi_rhc_intrinsic_nue" ]; then
 nuwro -i ${nuwro_params} -p "@target/MicroBooNE.txt" -p "@${NUWRO_FLUX_DIR}/uBooNE_Numi_rhc.txt" -o ${nuwrofilename} > NuWro_Out.log
+
+# NuMI FHC Dirt
+elif [ "$beam" == "numi_fhc_dirt" ]; then
+nuwro -i ${nuwro_params} -p "@target/MicroBooNEFull.txt" -p "@${NUWRO_FLUX_DIR}/uBooNE_Numi_fhc_dirt.txt" -o ${nuwrofilename} > NuWro_Out.log
+
+# NuMI RHC Dirt
+elif [ "$beam" == "numi_rhc_dirt" ]; then
+nuwro -i ${nuwro_params} -p "@target/MicroBooNEFull.txt" -p "@${NUWRO_FLUX_DIR}/uBooNE_Numi_rhc_dirt.txt" -o ${nuwrofilename} > NuWro_Out.log
 
 else 
 echo -e "${RED} Unrecognized beam type set. Please use bnb for the BNB, numi_fhc for NuMI FHC, numi rhc for NuMI RHC${NC}"
@@ -159,7 +176,13 @@ cd ${macro_dir}
 if [ "$beam" == "numi_fhc" ] || [ "$beam" == "numi_rhc" ]; then
 root -l -b <<-EOF
 .L nuwro_to_hepmc_numi.C
-nuwro_to_hepmc_numi( "${tmp_dir}/${sample_name}/nuwro/" , "${sample_name}" ,  "${tmp_dir}/${sample_name}/hepmc/" )
+nuwro_to_hepmc_numi( "${tmp_dir}/${sample_name}/nuwro/" , "${sample_name}" ,  "${tmp_dir}/${sample_name}/hepmc/" , 10000 )
+EOF
+
+elif [ "$beam" == "numi_fhc_dirt" ] || [ "$beam" == "numi_rhc_dirt" ]; then
+root -l -b <<-EOF
+.L nuwro_to_hepmc_numi.C
+nuwro_to_hepmc_numi( "${tmp_dir}/${sample_name}/nuwro/" , "${sample_name}" ,  "${tmp_dir}/${sample_name}/hepmc/" , 75000 )
 EOF
 
 elif [ "$beam" == "numi_fhc_intrinsic_nue" ] || [ "$beam" == "numi_rhc_intrinsic_nue" ]; then
@@ -168,10 +191,16 @@ root -l -b <<-EOF
 nuwro_to_hepmc_numi_pure_nue( "${tmp_dir}/${sample_name}/nuwro/" , "${sample_name}" ,  "${tmp_dir}/${sample_name}/hepmc/" )
 EOF
 
-elif [ "$beam" == "bnb" ]; then
+elif [ "$beam" == "bnb" ] || [ "$beam" == "bnb_run4a" ]; then
 root -l -b <<-EOF
 .L nuwro_to_hepmc_bnb.C
 nuwro_to_hepmc_bnb( "${tmp_dir}/${sample_name}/nuwro/" , "${sample_name}" ,  "${tmp_dir}/${sample_name}/hepmc/" )
+EOF
+
+elif [ "$beam" == "bnb_dirt" ]; then
+root -l -b <<-EOF
+.L nuwro_to_hepmc_bnb.C
+nuwro_to_hepmc_bnb( "${tmp_dir}/${sample_name}/nuwro/" , "${sample_name}" ,  "${tmp_dir}/${sample_name}/hepmc/" , 35000 )
 EOF
 
 else 

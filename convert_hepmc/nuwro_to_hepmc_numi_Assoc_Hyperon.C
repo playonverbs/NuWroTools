@@ -4,13 +4,15 @@
 #include <time.h>
 #include "TTree.h"
 #include "TFile.h"
+#include "FV.h"
 
-void nuwro_to_hepmc_bnb(std::string indir , std::string nuwro_file_name , std::string outdir, int eventsperfile=100) {
 
-   //assumes your file is nuwro_file_name.root
+
+void nuwro_to_hepmc_numi_Assoc_Hyperon(std::string indir , std::string nuwro_file_name , std::string outdir, int eventsperfile=100) {
 
    std::string cmd = "mkdir -p " + outdir;
    gSystem->Exec(cmd.c_str());
+
 
    // Input file
    std::string infile = indir + nuwro_file_name + ".root";
@@ -113,6 +115,7 @@ void nuwro_to_hepmc_bnb(std::string indir , std::string nuwro_file_name , std::s
    t->SetBranchStatus("post.pdg", 1);
    t->SetBranchAddress("post.pdg", post_pdg);
 
+
    Double_t        r_x;   
    Double_t        r_y;   
    Double_t        r_z;   
@@ -135,10 +138,8 @@ void nuwro_to_hepmc_bnb(std::string indir , std::string nuwro_file_name , std::s
    _hepmc_file.open(outdir + nuwro_file_name + "_" + std::to_string(0) + ".hepmc");
 
 
-
-
-   double GlobalTimeOffset = 3125.;
-   double RandomTimeOffset = 1600.;
+   double GlobalTimeOffset = 5627.5;
+   double RandomTimeOffset = 9600.;
 
    srand(time(0));
 
@@ -146,35 +147,45 @@ void nuwro_to_hepmc_bnb(std::string indir , std::string nuwro_file_name , std::s
 
    double entries = t->GetEntries();
 
-
+   int i_collected=0; //number of events collected 
 
    for (size_t i = 0; i < entries; i++){
 
       if (i % 1000 == 0) std::cout << "At entry " << i << std::endl;
 
-      if (event_count % eventsperfile == 0) {
-
-         //  std::cout << outdir+nuwro_file_name+"_"+std::to_string(i/50)+".hepmc" << std::endl;
+      if (i_collected % eventsperfile == 0) {
 
          // Close and open a new file
 
          _hepmc_file.close();
-         _hepmc_file.open(outdir + nuwro_file_name + "_" + std::to_string(event_count / eventsperfile) + ".hepmc");
+         _hepmc_file.open(outdir + nuwro_file_name + "_" + std::to_string(i_collected / eventsperfile) + ".hepmc");
 
 
       }
 
       t->GetEntry(i);
 
+      bool lambda=false,kaon=false;
+
+
+      //check if there is a Lambda in the final state
+      for(int j=0;j<post_;j++){
+         if(post_pdg[j] == 3122) lambda=true;
+         if(abs(post_pdg[j]) == 321) kaon=true;
+      }
+
+
+      //skip event if no lambda in final state
+      if(!lambda || !kaon) continue;
 
 
       // Neutrino time in the spill
       double nu_time = rand() / double(RAND_MAX) * RandomTimeOffset + GlobalTimeOffset;
 
-
-
       // Save the number of particles for this events (+1 for the neutrino)
-      _hepmc_file << i << " " << post_ + in_ << std::endl;
+      _hepmc_file << i_collected << " " << post_ + in_ << std::endl;
+
+      i_collected++;
 
       int ccnc = 0;
       if (!flag_cc) ccnc = 1;
@@ -254,18 +265,19 @@ void nuwro_to_hepmc_bnb(std::string indir , std::string nuwro_file_name , std::s
             << std::endl;
       }
 
-      event_count++;
 
    }
 
    _hepmc_file.close();
 
-   std::cout << event_count  << " events converted to hepmc" << std::endl;
+
+
+   std::cout << i_collected << " events ready" << std::endl;
+
 
    std::ofstream output("eventcount.meta");
-   output << event_count;
+   output << i_collected;
    output.close();
-
 
 
 }

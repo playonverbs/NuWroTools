@@ -168,7 +168,7 @@ void nuwro_to_hepmc_numi_pure_Lambda(std::string indir , std::string nuwro_file_
       bool lambda=false;
 
       //check if PV in fiducial volume
-      if( !inFV(TVector3(r_x,r_y,r_z)) )  continue;	
+      //if( !inFV(TVector3(r_x,r_y,r_z)) )  continue;	
 
 
       //check if there is a Lambda in the final state
