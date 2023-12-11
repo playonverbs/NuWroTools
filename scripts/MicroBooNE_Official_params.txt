@@ -7,11 +7,11 @@
 
 # The number of events used to calculate the cross sections: 
 
-number_of_test_events = 100000
+number_of_test_events = 500000
 
 # The number of equally weighted events to be saved:
 
-number_of_events   = 10000
+number_of_events   = 250000
  
 # Control the random seed persistence:
 
@@ -76,7 +76,7 @@ dyn_coh_cc =1      // Coherent charged current
 dyn_coh_nc =1      // Coherent neutral current
 dyn_mec_cc =1      // Meson exchange charged current
 dyn_mec_nc =1      // Meson exchange neutral current
-dyn_hyp_cc =0
+dyn_hyp_cc =1
 
 #dyn_e_el   =0      // Elastic electron scattering
 
