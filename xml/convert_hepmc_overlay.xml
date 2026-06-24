@@ -3,7 +3,7 @@
 <!-- Convert hepmc events into LArSoft format and overlay with offbeam data -->
 
 <!DOCTYPE project [
-<!ENTITY release "v08_00_00_28">
+<!ENTITY release "v08_00_00_85">
 <!ENTITY file_type "overlay">
 <!ENTITY run_type "physics">
 <!ENTITY username "cthorpe">

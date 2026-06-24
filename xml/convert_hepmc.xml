@@ -3,7 +3,7 @@
 <!-- Convert hepmc events into LArSoft format -->
 
 <!DOCTYPE project [
-<!ENTITY release "v08_00_00_28">
+<!ENTITY release "v08_00_00_85">
 <!ENTITY file_type "mc">
 <!ENTITY run_type "physics">
 <!ENTITY username "cthorpe">
@@ -28,7 +28,6 @@
 <larsoft>
 <tag>&release;</tag>
 <qual>e17:prof</qual>
-<local>/pnfs/uboone/resilient/users/cthorpe/nuwro_converter/nuwro_converter.tar</local>
 </larsoft>
 
   <version>prod_&release;</version>
