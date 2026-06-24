@@ -176,13 +176,13 @@ cd ${macro_dir}
 if [ "$beam" == "numi_fhc" ] || [ "$beam" == "numi_rhc" ]; then
 root -l -b <<-EOF
 .L nuwro_to_hepmc_numi.C
-nuwro_to_hepmc_numi( "${tmp_dir}/${sample_name}/nuwro/" , "${sample_name}" ,  "${tmp_dir}/${sample_name}/hepmc/" , 10000 )
+nuwro_to_hepmc_numi( "${tmp_dir}/${sample_name}/nuwro/" , "${sample_name}" ,  "${tmp_dir}/${sample_name}/hepmc/" )
 EOF
 
 elif [ "$beam" == "numi_fhc_dirt" ] || [ "$beam" == "numi_rhc_dirt" ]; then
 root -l -b <<-EOF
 .L nuwro_to_hepmc_numi.C
-nuwro_to_hepmc_numi( "${tmp_dir}/${sample_name}/nuwro/" , "${sample_name}" ,  "${tmp_dir}/${sample_name}/hepmc/" , 75000 )
+nuwro_to_hepmc_numi( "${tmp_dir}/${sample_name}/nuwro/" , "${sample_name}" ,  "${tmp_dir}/${sample_name}/hepmc/" )
 EOF
 
 elif [ "$beam" == "numi_fhc_intrinsic_nue" ] || [ "$beam" == "numi_rhc_intrinsic_nue" ]; then
@@ -200,7 +200,7 @@ EOF
 elif [ "$beam" == "bnb_dirt" ]; then
 root -l -b <<-EOF
 .L nuwro_to_hepmc_bnb.C
-nuwro_to_hepmc_bnb( "${tmp_dir}/${sample_name}/nuwro/" , "${sample_name}" ,  "${tmp_dir}/${sample_name}/hepmc/" , 35000 )
+nuwro_to_hepmc_bnb( "${tmp_dir}/${sample_name}/nuwro/" , "${sample_name}" ,  "${tmp_dir}/${sample_name}/hepmc/" )
 EOF
 
 else 
